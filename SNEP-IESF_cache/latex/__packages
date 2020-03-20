@@ -1,0 +1,16 @@
+base
+ggplot2
+ggraph
+igraph
+tidyverse
+tibble
+tidyr
+readr
+purrr
+dplyr
+stringr
+forcats
+RColorBrewer
+ggforce
+tidygraph
+circlize
