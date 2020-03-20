@@ -1,0 +1,89 @@
+---
+title: "SNEP IESF Conceptual Diagram"
+author: "Chip Heil and Emily Shumchenia - E&C Enviroscape, LLC."
+date: "3/19/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# SNEP IESF Conceptual Diagram
+## Edge Bundling and Heirarchy
+
+This document shows how parts of the **SNEP Integrated Ecosystem Services Framework (IESF) Conceptual Diagram** were created. At this stage, the major components of the diagram were created in RStudio and assembled in Adobe Illustrator. This report will show the *Edge Bundling* and the *Heirarchical Structure*.
+
+Below you'll find pieces of the R code used to construct a **Network Diagram**. An explanation of the intent of the code will be provided for context along with citations where appropriate.
+
+The data used in this diagram originates from the **SNEP Region IESF Relational Database** which outlines the hierarchecal structure between *Ecosystem Goods and Services*, *Beneficiaries*, and *Indicators and Metrics*.
+
+### Step 1 - Loading the R Libraries
+
+Here we load all of the libraries that are required for the different functions that will be called in the code. Not all of these libraries are critical, but it might be helpful to have them loaded in case you want to modify the code.
+
+```{r libraries, include=TRUE, eval=FALSE}
+library(ggraph)
+library(igraph)
+library(tidyverse)
+library(RColorBrewer)
+library(ggforce)
+library(tidygraph)
+library(circlize)
+```
+
+### Step 2 - Loading the Data and Making Connections
+
+At this stage we are loading the EXCEL CSV files that contain the individual components of the IESF Relational Database. In this case, three (3) different files were loaded based on their heirarchy, i.e., Group, Subgroup, Subgroup1, etc... These files can be defined by the user, but they need to show two (2) columns labelled "from" and "to", respectively, because they establish the hierarchechal connections. For example, the following code loads the Group to Subgroup components and connections:
+
+```{r group_data}
+d2 <- data.frame(read.csv("./Data files/IESF-Group.csv", header=T, as.is=T))
+
+d2
+```
+
+The following code shows all of the data files that are loaded and then combines them into one object that we've called "edges". In network diagrams, **Edges** refer to the *hierarchechal connections* between the **Groups** and **Subgroups**.
+
+```{r data, eval=FALSE}
+d1 <- data.frame(read.csv("./Data files/IESF-Origin.csv", header=T, as.is=T))
+d2 <- data.frame(read.csv("./Data files/IESF-Group.csv", header=T, as.is=T))
+d3 <- data.frame(read.csv("./Data files/IESF-Subgroup1.csv", header=T, as.is=T))
+edges <- rbind(d1, d2, d3)
+```
+
+The next line of code creates the *relational connections* between the individual components called **Vertices**. This builds the connections between all the *Ecosystem Goods and Services* and their *Beneficiaries* and  *Indicators and Metrics*.
+
+```{r connections}
+connect <- data.frame(read.csv("./Data files/IESF-Edges.csv", header=T, as.is=T))
+```
+
+### Step 3 - Creating the Vertices
+
+In this step, we create the diagram's **Vertices** and their labels. Some code is included to arrange the labels appropriately, but I preferred to recreate and reorient the labels in Illustrator later.
+
+```{r vertices, eval=FALSE}
+## Create a vertices data.frame. One line per object of the hierarchy
+vertices  <-  data.frame(
+  name = unique(c(as.character(edges$from), as.character(edges$to))) , 
+  value = runif(67)
+) 
+## Add a column with the group of each name. It will be useful later to color points
+vertices$group  <-  edges$from[ match( vertices$name, edges$to ) ]
+#vertices$group  <-  edges1$from[ match( vertices$name, edges1$to ) ]
+
+## Add information concerning the label to be added: angle, horizontal adjustement and potential flip
+## First calculate the ANGLE of the labels
+vertices$id <- NA
+myleaves <- which(is.na( match(vertices$name, edges$from) ))
+nleaves <- length(myleaves)
+vertices$id[ myleaves ] <- seq(1:nleaves)
+vertices$angle <- 90 - 360 * vertices$id / nleaves
+
+## Then calculate the alignment of labels: right or left
+## If I am on the left part of the plot, my labels have currently an angle < -90
+vertices$hjust <- ifelse( vertices$angle < -90, 1, 0)
+
+## Now flip the angle BY to make them readable
+vertices$angle <- ifelse(vertices$angle < -90, vertices$angle+180, vertices$angle)
+```
+

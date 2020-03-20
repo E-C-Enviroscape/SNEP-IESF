@@ -1,0 +1,50 @@
+﻿from,to
+Provisioning Service,Food
+Provisioning Service,Raw Materials
+Provisioning Service,Fresh Water
+Provisioning Service,Medicinal Resources
+Regulating Service,Local Climate and Air Quality
+Regulating Service,Carbon Sequestration/Storage
+Regulating Service,Moderation of Extreme Events
+Regulating Service,Wastewater Treatment
+Regulating Service,Erosion Prevention/Soil Maintenance
+Regulating Service,Pollination
+Regulating Service,Biological Control
+Habitat or Supporting Service,Habitats for Species
+Habitat or Supporting Service,Maintenance of Genetic Diversity
+Cultural Service,Recreation and Mental/Physical Health
+Cultural Service,Tourism
+Cultural Service,"Aesthetic Appreciation/Inspiration for Culture, Art and Design"
+Cultural Service,Spiritual Experience and Sense of Place
+Agricultural,Farmers
+Commercial/Industrial,Entertainment Companies
+Commercial/Industrial,Hospitality Company
+Commercial/Industrial,Marinas
+Commercial/Industrial,Charter Fishing Companies
+Commercial/Industrial,Port Managers
+Commercial/Industrial,Commercial Fishermen
+Commercial/Industrial,Transportation Company
+Commercial/Industrial,Sand and Gravel Miners
+Commercial/Industrial,Engineering Companies
+Commercial/Industrial,Realtors
+Commercial/Industrial,Seasonal Workforce
+Commercial/Industrial,Power Plant
+Education/Research,Educators
+Education/Research,Scientists/Researchers
+Government,Military
+Government,Municipality Organization
+Government,State Governmental Organization
+Government,Tribes
+Non-Use,Artists
+Non-Use,Conservation/Advocacy Organizations
+Non-Use,Spiritual Groups
+Recreational,Outdoor Enthusiasts
+Residential,Homeowners
+Residential,Renters
+Subsistence,Subsistence Food Gatherer
+Environmental Data,Climate Indicators
+Environmental Data,Habitat Quality
+Environmental Data,Water Quality
+Social Data,Financial Indicators
+Social Data,Footprint of Use
+Social Data,Number of Users
