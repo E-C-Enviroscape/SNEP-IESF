@@ -1,7 +1,7 @@
 ---
-title: "SNEP IESF Conceptual Diagram"
+title: "APPENDIX 1: SNEP IESF Conceptual Diagram Construction Code and Notes"
 author: "Chip Heil and Emily Shumchenia - E&C Enviroscape, LLC."
-date: "3/19/2020"
+date: "3/23/2020"
 output: pdf_document
 ---
 
@@ -101,11 +101,15 @@ from  <-  match( connect$from, vertices$name)
 to  <-  match( connect$to, vertices$name)
 
 ggraph(mygraph, layout = 'dendrogram', circular = TRUE) + 
+  ## creating the nodes for the vertices and coloring them based on the upper level group
   geom_node_point(aes(filter = leaf, x = x*1.00, y=y*1.00, colour=group, size=0.99, 
                       alpha=0.2)) +
+  ## bundling the connections
   geom_conn_bundle(data = get_con(from = from, to = to), alpha=0.5, width=0.5, 
                    show.legend = FALSE, aes(colour=..index..), tension=0.6) +
+  ## setting the color palette of the connections
   scale_edge_colour_distiller(palette = "BuGn") +
+  ## creating the text for the vertices
   geom_node_text(aes(x = x*1.15, y=y*1.15, filter = leaf, label=name), size=2,  alpha=1) +
   coord_fixed() +
   theme_no_axes() +
@@ -124,7 +128,9 @@ ggraph(mygraph, layout = 'dendrogram', circular = TRUE) +
 ```
 
 
+
 In the next chunk of code, we create *arc bars* to represent the upper levels of the hierarchy (e.g., **Group** and **Subgroup**).
+
 
 
 ```{r arc_bars,fig.height=4, fig.width=4, fig.align='center'}
@@ -159,13 +165,70 @@ ggraph(mygraph, layout = 'dendrogram', circular = TRUE) +
 ```
 
 
-Now we can combine the last two (2) figures to how *BOTH* the heirarchy and the connections.
 
-```{r combined,fig.height=6, fig.width=6, fig.align='center'}
+Now we can combine the last two (2) figures to show *BOTH* the heirarchy and the connections.
+
+
+
+```{r combined,fig.height=6.5, fig.width=6.5, fig.align='center'}
 ggraph(mygraph, layout = 'dendrogram', circular = TRUE) + 
   ## bundling the connections
   geom_conn_bundle(data = get_con(from = from, to = to), alpha=0.5, width=0.5, 
                    show.legend = FALSE, aes(colour=..index..), tension=0.6) +
+  ## setting the color palette of the connections
+  scale_edge_colour_distiller(palette = "BuGn") +
+  ## creating the text for the vertices
+  geom_node_text(aes(x = x*1.15, y=y*1.15, filter = leaf, label=name), size=2,  alpha=1) +
+  ## arc_bar for Group
+  geom_arc_bar(aes(x0 = 0, y0 = 0, r0 = 1.4, r = 1.6, amount = amount2, fill = d1$to), 
+               alpha = 0.2, data = d1, stat = 'pie', show.legend = FALSE) + 
+  ## arc_bar for Subgroup
+  geom_arc_bar(aes(x0 = 0, y0 = 0, r0 = 1.2, r = 1.4, amount = amount, fill = d2$to), 
+               alpha = 0.2, data = d2, stat = 'pie', show.legend = FALSE) +
+  #arc_bar for subgroup1
+  geom_arc_bar(aes(x0 = 0, y0 = 0, r0 = 1.0, r = 1.2, amount = amount1, fill = d3$to), 
+               alpha = 0.2, data = d3, stat = 'pie', show.legend = FALSE) +
+  coord_fixed() +
+  theme_no_axes() +
+  scale_size_continuous( range = c(0.1,10) ) +
+  scale_y_continuous(breaks = NULL) +
+  theme_void() +
+  theme(
+    legend.position="none",
+    plot.margin=unit(c(0,0,0,0),"cm"),
+  ) +
+  guides(size=FALSE) +
+  guides(alpha=FALSE) +
+  labs(colour="") +
+ 
+  expand_limits(x = c(-1.5, 1.5), y = c(-1.5, 1.5))
+```
+From this point, the the final figure was exported as a PDF so that it could be opened in Illustrator to insert and modify the labels and colors according to their groupings. Future work could include adding the appropriate code to accomplish both of those tasks.
+
+### Step 5 - Highlighting specific connections
+
+This framework was created to serve a broad range of users including scientists, managers, and the general public. As such, the users may "enter" the framework from different points. For instance, Comercial Fisherman can enter from their block and see only the connections between **Ecosystem Goods and Services**, **Indictors and Metrics**, and themselves. The code below was created to highlight just those connections using a simple spreadsheet that has **Commercial Fisherman** (Beneficiaries) in the "from" column (column 1) and all the services and metrics in the "to" column (column 2). Other example data files are provided for entry points from **Water Quality** (Indictors and Metrics) and **Food** (Ecosystem Goods and Services). Future work could include adding the code to extract the connections for a given entry point and creating the data frame.
+
+
+
+```{r single_connection, fig.height=6.5, fig.width=6.5, fig.align='center'}
+## Highlighting the connections from one (1) starting point:
+
+## There are three (3) data files included in this porject for this demonstration
+## 1) connect_CF is the connections starting from Commercial Fisherman (Beneficiaries)
+## 2) connect_FOOD is the connections starting from Food (Ecosystem goods and Services)
+## 3) connect_WQ is the connections starting from Water Quality (Indicators and Metrics)
+## the code below is just with the connections for Commercial Fisherman but can be 
+## modified by changing the file name
+
+connect_CF <- data.frame(read.csv("./Data files/connect_CF.csv", header=T, as.is=T))
+from_head_CF = match(connect_CF$from, vertices$name) %>% head(16)
+to_head_CF = match(connect_CF$to, vertices$name) %>% head(16)
+
+ggraph(mygraph, layout = 'dendrogram', circular = TRUE) + 
+  ## bundling the connections
+  geom_conn_bundle(data = get_con(from = from_head_CF, to = to_head_CF), alpha = 1, 
+                   colour="#69b3a2", width=0.5, tension=0.9) + 
   ## setting the color palette of the connections
   scale_edge_colour_distiller(palette = "BuGn") +
   ## creating the text for the vertices
